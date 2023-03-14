@@ -7,6 +7,16 @@ void moveservo(int port, int position) {
     msleep(1000);
 }
 
+void movemotor(int port, int position, int motorpower, int limitswitchport) {
+    clear_motor_position_counter(port);
+    if (digital(limitswitchport) == 0) {
+        while (get_motor_position_counter(port) <= position) {
+            motor(port, motorpower);
+            msleep(10);
+        }
+    }
+}
+
 void setupsensordata() {
     set_create_distance(0);
     set_create_total_angle(0);
@@ -34,12 +44,7 @@ void printsensordata() {
 }
 
 bool setupcamera() {
-    if (camera_open() == 0) {
-        return false;
-    }
-    if (camera_update() == 0) {
-        return false;
-    }
+    if (camera_open() == 0 || camera_update() == 0) return false;
     return true;
 }
 
@@ -50,11 +55,8 @@ void setuprobot(bool debug, bool camera) {
         printsensordata();
     }
     if (camera) {
-        if (setupcamera()) {
-            printf("%s", "Camera initialized");
-        } else {
-            printf("%s", "Camera Error");
-        }
+        if (setupcamera()) printf("%s", "Camera initialized");
+        else printf("%s", "Camera Error");
     }
     enable_servos();
 }
@@ -70,12 +72,12 @@ void shutdownrobot(bool camera) {
 }
 
 void drivestraight(int speed, bool direction, int distance,
-                   bool watchfortouch) { //false backwards true forwards distance in mm
+                   bool watch_for_touch) { //false backwards true forwards distance in mm
     if (direction == true) {
         set_create_distance(0);
         while (get_create_distance() <= (distance)) {
             create_drive_direct(speed, speed);
-            if (watchfortouch) {
+            if (watch_for_touch) {
                 if (get_create_lbump() || get_create_rbump() == true) {
                     set_create_distance(distance);
                 }
@@ -147,32 +149,26 @@ void closeclaw(int servoport) {
     moveservo(servoport, 0);
 }
 
-void movex(int servoport, int degrees) { // first axis
-    if (degrees < 0) {
-        moveservo(servoport, degrees * -2);
-    } else {
-        moveservo(servoport, degrees * 2);
-    }
-}
 
-void levelclaw(int servoportx, int servoporty, int servoportz) {
-    get_servo_position(servoportx);
-    get_servo_position(servoporty);
-    get_servo_position(servoportz);
-}
-
-int getObject(int channel) {
+void getObject(int channel){
+    if(!get_object_count(channel)) return;
     camera_update();
-    if (get_object_count(channel)) {
-        get_object_center_x(channel, 0); // 0 ist des größte
-        get_object_center_y(channel, 0);
 
-    }
-    return 0;
+    get_object_center_x(channel, 0);
+    get_object_center_y(channel, 0);
 }
 
-void movearm(){
-    // placeholder
+void movexarm(int port, int position, int limitswitchport) {
+    movemotor(port, position, 100, limitswitchport);
+}
+
+void levelarm(int port, int position, int motorpower, int limitswitchport) {
+    clear_motor_position_counter(port);
+    while (digital(limitswitchport) == 0) {
+        motor(port, motorpower);
+        msleep(10);
+    }
+    printf("%s", get_motor_position_counter(port));
 }
 
 int main() {
