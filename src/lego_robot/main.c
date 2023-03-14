@@ -7,7 +7,7 @@
 
 /*
     -> Since KIPR provides functions using snake_case, I'd recommend also switching to snake_case for our functions and variables
-    ->
+    -> Use boolean as return type for TRUE/FALSE values from now on!
 */
 
 void follow_black_line(int, int);
