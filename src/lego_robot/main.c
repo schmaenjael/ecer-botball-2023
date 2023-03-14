@@ -68,7 +68,7 @@ void follow_black_line(int motor_a, int motor_b)
 void drive_to_start()
 {
     enable_servo(0);
-    msleep(10);
+    msleep(30);
     set_servo_position(0, 1000);
     msleep(10);
 
