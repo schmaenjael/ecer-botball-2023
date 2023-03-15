@@ -13,14 +13,14 @@
 void follow_black_line(int, int);
 void drive(int, int, int);
 void drive_to_start();
+void bring_poms_to_Analysis_Center();
 boolean is_frontal_collision();
 boolean drive_distance(int);
+boolean is_over_black_line = false;
 
 int main()
 {
     drive_to_start();
-    clear_motor_position_counter(0);
-    clear_motor_position_counter(1);
 
     return 0;
 }
@@ -68,7 +68,7 @@ void follow_black_line(int motor_a, int motor_b)
 void drive_to_start()
 {
     enable_servo(0);
-    msleep(10);
+    msleep(30);
     set_servo_position(0, 1000);
     msleep(10);
 
@@ -81,9 +81,27 @@ void drive_to_start()
     msleep(500);
     drive(-100, 100, 1600);
     set_servo_position(0, 1000);
+    clear_motor_position_counter(0);
+    clear_motor_position_counter(1);
 
-    while (drive_distance(125000) && is_frontal_collision())
+    while (drive_distance(12500) && is_frontal_collision())
     {
         follow_black_line(60, 60);
     }
+    bring_poms_to_analysis_center();
+}
+
+void bring_poms_to_analysis_center(){
+    printf("poms zum analyse cetner wuerd ufgrueafa \n");
+    set_servo_position(0,0);
+    msleep(500);
+    drive(0,0,100);
+    drive(-70,20,2000);
+    set_servo_position(0,1400);
+    while(is_frontal_collision()){
+        drive(80,80,1);
+
+    }
+    drive(0,0,200);
+    drive(-70,-70,1000);
 }
