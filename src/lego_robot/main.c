@@ -13,7 +13,7 @@
 void follow_black_line(int, int);
 void drive(int, int, int);
 void drive_to_start();
-void bring_poms_to_Analysis_Center();
+void bring_poms_to_analysis_center();
 boolean is_frontal_collision();
 boolean drive_distance(int);
 boolean is_over_black_line = false;
