@@ -92,7 +92,6 @@ void drive_to_start()
 }
 
 void bring_poms_to_analysis_center(){
-    printf("poms zum analyse cetner wuerd ufgrueafa \n");
     set_servo_position(0,0);
     msleep(500);
     drive(0,0,100);
