@@ -151,16 +151,48 @@ int main()
     msleep(200);						//driving back, that arm would not hit the horizontal stair
     create_drive_direct(0,0);			//
     
-    while(get_motor_position_counter(0)>=-3500){		//-----------------------------------------------
+    while(get_motor_position_counter(0)>=-3400){		//-----------------------------------------------
         motor(0, -100);
         msleep(1);										//move arm up to the height of the second stair
     }
     motor(0,0);											//-----------------------------------------------
     
-    create_drive_direct(-100,50);						//
-    msleep(400);										//drive to the left to get in position for the next stair
-    create_drive_direct(0,0);							//
+    create_drive_direct(-100,50);		//
+    msleep(400);						//drive to the left to get in position for the next stair
+    create_drive_direct(0,0);			//
     
+    create_drive_direct(100,100);		//
+    msleep(200);						//drive to the front to get ring in the middle of the horizontale
+    create_drive_direct(0,0);			//
+    
+    set_servo_position(1,600);			//turn ring vertikal to go up the horizontal stair
+  	msleep(300);
+    
+    while(get_motor_position_counter(0)>=-5500){		//-----------------------------------------------
+        motor(0, -100);
+        msleep(1);										//move arm up
+    }
+    motor(0,0);											//-----------------------------------------------
+    
+    set_servo_position(1,0);			//tilt ring to the left that he can get moved to the left on the third stair
+    
+    create_drive_direct(100,100);		//
+    msleep(250);						//drive to the front to get ring in the middle of the horizontale
+    create_drive_direct(0,0);			//
+    
+    while(get_motor_position_counter(0)>=-7400){		//-----------------------------------------------
+        motor(0, -100);
+        msleep(1);										//move arm up to the height of the last stair
+    }
+    motor(0,0);											//-----------------------------------------------
+    
+    create_drive_direct(-100,100);		//
+    msleep(400);						//drive to the left to get in end position
+    create_drive_direct(0,0);			//
+    
+    create_drive_direct(100,100);		//
+    msleep(200);						//driving forward just because this task is dumb
+    create_drive_direct(0,0);			//
     
     //turn_arm_back();
 
