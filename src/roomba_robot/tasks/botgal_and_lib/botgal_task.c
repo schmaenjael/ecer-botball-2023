@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include "kipr/wombat.h"
+#define DEBUG true
 
 void moveservo(int port, int position) {
     enable_servos();
@@ -51,9 +52,9 @@ bool setupcamera() {
 void setuprobot(bool debug, bool camera) {
     create_connect();
     setupsensordata();
-    if (debug) {
-        printsensordata();
-    }
+#ifdef DEBUG
+    printsensordata();
+#endif
     if (camera) {
         if (setupcamera()) printf("%s", "Camera initialized");
         else printf("%s", "Camera Error");
@@ -142,7 +143,7 @@ void wasd() { // function to control robot via webinterface
 
 void calibration(){
     // default positions
-    int servoArm = 2000;
+    int servo_arm = 2000;
     int servoTurnArm = 1500;
     int servoHand = 100;
     int motorArm = 12700;
@@ -154,7 +155,7 @@ void calibration(){
     }
     clear_motor_position_counter(0);
     msleep(5);
-    set_servo_position(0,servoArm);
+    set_servo_position(0,servo_arm);
     msleep(5);
     set_servo_position(1,servoTurnArm);
     msleep(5);
@@ -186,12 +187,4 @@ void drive_to_botgal(){
     turn(100,55);
     drivestraight(100,forward,430,false);
 }
-}
-
-int main() {
-    setuprobot(false, false);
-    calibration();
-    drive_to_botgal();
-    shutdownrobot(false);
-    return 0;
 }
