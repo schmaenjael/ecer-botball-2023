@@ -2,13 +2,13 @@
 #include "kipr/wombat.h"
 #define DEBUG true
 
-void moveservo(int port, int position) {
+void move_servo(int port, int position) {
     enable_servos();
     set_servo_position(port, position);
     msleep(1000);
 }
 
-void movemotor(int port, int position, int motorpower, int limitswitchport) {
+void move_motor(int port, int position, int motorpower, int limitswitchport) {
     clear_motor_position_counter(port);
     if (digital(limitswitchport) != 0) return;
 
@@ -18,13 +18,13 @@ void movemotor(int port, int position, int motorpower, int limitswitchport) {
     }
 }
 
-void setupsensordata() {
+void setup_sensordata() {
     set_create_distance(0);
     set_create_total_angle(0);
 }
 
 
-void printsensordata() {
+void print_sensordata() {
     printf("%d,%d,%s", get_create_rwdrop(), 0, "right wheel drop \n");
     printf("%d,%d,%s", get_create_rcliff(), 0, "right cliff \n");
     printf("%d,%d,%s", get_create_rlightbump(), 0, "right light bumper \n");
@@ -44,25 +44,25 @@ void printsensordata() {
     printf("%d,%d,%s", get_create_total_angle(), 0, "total angle \n");
 }
 
-bool setupcamera() {
+bool setup_camera() {
     if (camera_open() == 0 || camera_update() == 0) return false;
     return true;
 }
 
-void setuprobot(bool debug, bool camera) {
+void setup_robot(bool debug, bool camera) {
     create_connect();
-    setupsensordata();
+    setup_sensordata();
 #ifdef DEBUG
-    printsensordata();
+    print_sensordata();
 #endif
     if (camera) {
-        if (setupcamera()) printf("%s", "Camera initialized");
+        if (setup_camera()) printf("%s", "Camera initialized");
         else printf("%s", "Camera Error");
     }
     enable_servos();
 }
 
-void shutdownrobot(bool camera) {
+void shutdown_robot(bool camera) {
     if (camera) {
         camera_close();
     }
@@ -72,7 +72,7 @@ void shutdownrobot(bool camera) {
     create_disconnect();
 }
 
-void drivestraight(int speed, enum direction{forward,backward}; direction, int distance,bool watch_for_touch) { // distance in mm
+void drive_straight(int speed, enum direction{forward,backward}; direction, int distance,bool watch_for_touch) { // distance in mm
     if (direction == forward) {
         set_create_distance(0);
         while (get_create_distance() <= (distance)) {
@@ -107,8 +107,7 @@ void turn(int speed, int deg) {
 }
 
 void wasd() { // function to control robot via webinterface
-    bool exit;
-    exit = true;
+    bool exit = true;
     int speed = 100;
     while (exit) {
         char input;
@@ -116,10 +115,10 @@ void wasd() { // function to control robot via webinterface
         scanf("%c", &input);
         switch (input) {
             case 'w':
-                drivestraight(speed, forward, 25, true);
+                drive_straight(speed, forward, 25, true);
                 break;
             case 's':
-                drivestraight(speed, backward, 25, true);
+                drive_straight(speed, backward, 25, true);
                 break;
             case 'd':
                 turn(speed / 2, -45);
@@ -179,12 +178,12 @@ void grab_botgal(){
 }
 
 void drive_to_botgal(){
-    drivestraight(100,backward,10,false);
+    drive_straight(100,backward,10,false);
     turn(100,-90);
-    drivestraight(100,forward,800,false);
+    drive_straight(100,forward,800,false);
     turn(100,45);
-    drivestraight(100,forward,400,false);
+    drive_straight(100,forward,400,false);
     turn(100,55);
-    drivestraight(100,forward,430,false);
+    drive_straight(100,forward,430,false);
 }
 }
