@@ -9,11 +9,11 @@ void moveservo(int port, int position) {
 
 void movemotor(int port, int position, int motorpower, int limitswitchport) {
     clear_motor_position_counter(port);
-    if (digital(limitswitchport) == 0) {
-        while (get_motor_position_counter(port) <= position) {
-            motor(port, motorpower);
-            msleep(10);
-        }
+    if (digital(limitswitchport) != 0) return;
+
+    while (get_motor_position_counter(port) <= position) {
+        motor(port, motorpower);
+        msleep(10);
     }
 }
 
@@ -51,7 +51,7 @@ bool setupcamera() {
 void setuprobot(bool debug, bool camera) {
     create_connect();
     setupsensordata();
-    if (debug == true) {
+    if (debug) {
         printsensordata();
     }
     if (camera) {
@@ -71,9 +71,8 @@ void shutdownrobot(bool camera) {
     create_disconnect();
 }
 
-void drivestraight(int speed, bool direction, int distance,
-                   bool watch_for_touch) { //false backwards true forwards distance in mm
-    if (direction == true) {
+void drivestraight(int speed, enum direction{forward,backward}; direction, int distance,bool watch_for_touch) { // distance in mm
+    if (direction == forward) {
         set_create_distance(0);
         while (get_create_distance() <= (distance)) {
             create_drive_direct(speed, speed);
@@ -92,7 +91,7 @@ void drivestraight(int speed, bool direction, int distance,
 }
 
 void turn(int speed, int deg) {
-    // deg - nach rechts + nach links
+    // deg - turn to right  + turn to left
     set_create_distance(0);
     set_create_total_angle(0);
     if (deg > 0) {
@@ -114,34 +113,35 @@ void wasd() { // function to control robot via webinterface
         char input;
         printf("%s", "Please provide input:\n");
         scanf("%c", &input);
-        if (input == 'w') {
-            drivestraight(speed, true, 25, true);
-        }
-        if (input == 's') {
-            drivestraight(speed, false, 25, true);
-        }
-        if (input == 'd') {
-            turn(speed / 2, -45);
-        }
-        if (input == 'a') {
-            turn(speed / 2, 45);
-        }
-        if (input == 'x') {
-            exit = false;
-        }
-        if (input == 'm') {
-            printf("%s", "Please provide speed:\n");
-            scanf("%d", &speed);
+        switch (input) {
+            case 'w':
+                drivestraight(speed, forward, 25, true);
+                break;
+            case 's':
+                drivestraight(speed, backward, 25, true);
+                break;
+            case 'd':
+                turn(speed / 2, -45);
+                break;
+            case 'a':
+                turn(speed / 2, 45);
+                break;
+            case 'x':
+                exit = false;
+                break;
+            case 'm':
+                printf("%s", "Please provide speed:\n");
+                scanf("%d", &speed);
+                break;
+            default:
+                printf("%s", "Invalid input\n");
+                break;
         }
     }
 }
 
-
-
-
-
 void calibration(){
-    //normal Positions
+    // default positions
     int servoArm = 2000;
     int servoTurnArm = 1500;
     int servoHand = 100;
@@ -167,7 +167,7 @@ void calibration(){
     motor(0, 0);
 }
 
-void grabbotgal(){
+void grab_botgal(){
     clear_motor_position_counter(0);
     while(get_motor_position_counter(0) <= 800){
         motor(0, -100);
@@ -177,20 +177,21 @@ void grabbotgal(){
     set_servo_position(0,)
 }
 
-void drivetobotgal(){
-    drivestraight(100,false,10,false);
+void drive_to_botgal(){
+    drivestraight(100,backward,10,false);
     turn(100,-90);
-    drivestraight(100,true,800,false);
+    drivestraight(100,forward,800,false);
     turn(100,45);
-    drivestraight(100,true,400,false);
+    drivestraight(100,forward,400,false);
     turn(100,55);
-    drivestraight(100,true,430,false);
+    drivestraight(100,forward,430,false);
+}
 }
 
 int main() {
     setuprobot(false, false);
     calibration();
-    drivetobotgal();
+    drive_to_botgal();
     shutdownrobot(false);
     return 0;
 }
